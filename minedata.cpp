@@ -1,6 +1,6 @@
 #include "minedata.h"
 
-MineData::mineData()
+MineData::MineData()
     : m_y(-1), m_x(-1),
       m_val(0)
 {

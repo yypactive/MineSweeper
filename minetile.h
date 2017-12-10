@@ -2,18 +2,31 @@
 #define MINETILE_H
 
 #include <QObject>
+#include <QtGui>
 #include <QGraphicsRectItem>
-
+#include <memory>
 #include "minedata.h"
 
 class MineTile : public QGraphicsRectItem
 {
 public:
+    using MineDataPtr = std::shared_ptr<MineData>;
+    static const qreal ms_width;
+    static const qreal ms_height;
+
+public:
     MineTile();
     virtual	~MineTile();
 
+    void setData(MineDataPtr _data);
+    void setPhyPos(QPointF _p);
+
     char getDisplayVal();
-    QPoint getPos();
+    char getVal();
+    QPointF getPos();
+    QPoint getLogicPos();
+    unsigned getIndexX();
+    unsigned getIndexY();
 
 public slots:
     void setDisplayState(bool _isCovered = false); // left click
@@ -25,10 +38,11 @@ protected:
 
 private:
     char m_displayVal; //'1'-'9','^','?','0'=None
+    bool m_isCovered;
 
-    unsigned m_locx;
-    unsigned m_locy;
-    MineData m_data;
+    qreal m_phx;
+    qreal m_phy;
+    MineDataPtr m_data;
 
 };
 
