@@ -2,7 +2,7 @@
 
 MineData::MineData()
     : m_y(-1), m_x(-1),
-      m_val(0)
+      m_val('0'), m_mine(false)
 {
 
 }
@@ -22,17 +22,27 @@ void MineData::setVal(unsigned _val)
     m_val = _val;
 }
 
-unsigned MineData::getX()
+void MineData::setMine(bool _mine)
+{
+    m_mine = _mine;
+}
+
+unsigned MineData::getX() const
 {
     return m_x;
 }
 
-unsigned MineData::getY()
+unsigned MineData::getY() const
 {
     return m_y;
 }
 
-unsigned MineData::getVal()
+unsigned MineData::getVal() const
 {
     return m_val;
+}
+
+bool MineData::getMine() const
+{
+    return m_mine;
 }

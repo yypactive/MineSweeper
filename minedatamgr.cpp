@@ -23,6 +23,7 @@ void MineDataMgr::init(unsigned _row, unsigned _col, unsigned _amount)
     {
         for (unsigned j = 0; j < _col; ++j)
         {
+            m_matrix[i][j] = std::make_shared<MineData>();
             m_matrix[i][j]->setY(i);
             m_matrix[i][j]->setX(j);
         }
@@ -50,9 +51,29 @@ void MineDataMgr::assignMine(unsigned _sy, unsigned _sx)
 {
     for (unsigned i = 0; i < m_valVec.size(); ++i)
     {
-        unsigned ny = i < _sy * m_col + _sx ? _sy : (_sy * m_col + _sx + 1) / m_col;
-        unsigned nx = i < _sy * m_col + _sx ? _sx : (_sy * m_col + _sx + 1) % m_col;
-        m_matrix[ny][nx]->setVal(m_valVec[i]);
+        unsigned ny = i < _sy * m_col + _sx ? i / m_col: (i + 1) / m_col;
+        unsigned nx = i < _sy * m_col + _sx ? i % m_col: (i + 1) % m_col;
+        m_matrix[ny][nx]->setMine(m_valVec[i]);
+    }    
+}
+
+void MineDataMgr::calVal()
+{
+    for (unsigned i = 0; i < m_row; ++i)
+    {
+        for (unsigned j = 0; j < m_col; ++j)
+        {
+            PointVec neighborVec = std::move(getNeighborVec(i, j));
+            unsigned val = 0;
+            std::for_each(neighborVec.begin(), neighborVec.end(),
+                          [&](std::pair<unsigned, unsigned> _point)
+            {
+                if (m_matrix[_point.first][_point.second]->getMine())
+                    val ++;
+            }
+            );
+            m_matrix[i][j]->setVal(val + '0');
+        }
     }
 }
 
@@ -65,4 +86,18 @@ void MineDataMgr::clear()
 std::shared_ptr<MineData> MineDataMgr::getMineData(unsigned _row, unsigned _col)
 {
     return m_matrix[_row][_col];
+}
+
+MineDataMgr::PointVec MineDataMgr::getNeighborVec(unsigned _y, unsigned _x)
+{
+    PointVec pvec;
+    for (int i = -1; i < 2; ++i)
+    {
+        for (int j = -1; j < 2; ++j)
+        {
+            if (_y + i >= 0 && _y + i < m_row && _x +j >= 0 && _x + j < m_col)
+                pvec.push_back(std::move(std::make_pair(_y+i, _x+j)));
+        }
+    }
+    return pvec;
 }

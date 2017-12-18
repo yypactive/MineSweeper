@@ -15,13 +15,21 @@ class ViewWidget : public QWidget
     Q_OBJECT
 public:
     explicit ViewWidget(QWidget *parent = 0);
-
+    void newGame();
     void initMatrix();
 
 public:
     using MineTileMatrixPtr = std::unique_ptr<MineTileMatrix>;
 
-public slots:
+signals:
+    void startStopWatch();
+    void sendSucc();
+    void sendFail();
+    void setFlagCount(unsigned);
+
+private:
+    void initConnect();
+    void clearAll();
 
 private:
     View * m_view;

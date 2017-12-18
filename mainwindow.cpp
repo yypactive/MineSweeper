@@ -49,22 +49,47 @@ MainWindow::initWindow()
 
 MainWindow::initMenu()
 {
-    initAction();
-    m_GameMenu = new QMenu(tr("Game"), this);
-    m_HelpMenu = new QMenu(tr("Help"), this);
 
-    menuBar()->addMenu(m_GameMenu);
-    menuBar()->addMenu(m_HelpMenu);
+    m_gameMenu = new QMenu(tr("Game"), this);
+    m_helpMenu = new QMenu(tr("Help"), this);
+    initAction();
+
+    menuBar()->addMenu(m_gameMenu);
+    menuBar()->addMenu(m_helpMenu);
 }
 
 MainWindow::initAction()
 {
-
+    // Game
+    m_newGameAct = new QAction(QIcon(""), tr("New Game"), this);
+    m_optionsAct = new QAction(QIcon(""), tr("Options"), this);
+    m_exitAct = new QAction(QIcon(""), tr("Exit"), this);
+    m_newGameAct->setShortcut(QKeySequence(tr("F2")));
+    m_optionsAct->setShortcut(QKeySequence(tr("F4")));
+    m_gameMenu->addAction(m_newGameAct);
+    m_gameMenu->addSeparator();
+    m_gameMenu->addAction(m_optionsAct);
+    m_gameMenu->addSeparator();
+    m_gameMenu->addAction(m_exitAct);
+    // Help
+    m_helpAct = new QAction(QIcon(""), tr("View Help"), this);
+    m_aboutAct = new QAction(QIcon(""), tr("About"), this);
+    m_moreGameAct = new QAction(QIcon(""), tr("More Game"), this);
+    m_helpAct->setShortcut(QKeySequence(tr("F1")));
+    m_helpMenu->addAction(m_helpAct);
+    m_helpMenu->addSeparator();
+    m_helpMenu->addAction(m_aboutAct);
+    m_helpMenu->addSeparator();
+    m_helpMenu->addAction(m_moreGameAct);
 }
 
 MainWindow::initConnect()
 {
     connect(m_ctrlBtn, SIGNAL(clicked()), this, SLOT(onBtnClickedHandle()));
+    connect(m_ViewWidget, SIGNAL(startStopWatch()), this, SLOT(startGame()));
+    connect(m_ViewWidget, SIGNAL(sendSucc()), this, SLOT(succ()));
+    connect(m_ViewWidget, SIGNAL(sendFail()), this, SLOT(fail()));
+    connect(m_ViewWidget, SIGNAL(setFlagCount(unsigned)), m_mineBoard, SLOT(setMineNumber(unsigned)));
 }
 
 void MainWindow::setNormalStyle(QPushButton *_btn)
@@ -91,8 +116,24 @@ void MainWindow::setFailStyle(QPushButton *_btn)
 void MainWindow::onBtnClickedHandle()
 {
     m_stopWatch->reset();
+    // clean all
+    // new Game
+}
+
+void MainWindow::startGame()
+{
     m_stopWatch->start();
-    // run
-    m_btnStyle == State::run;
+}
+
+void MainWindow::succ()
+{
+    m_stopWatch->stop();
+    setSuccessStyle(m_ctrlBtn);
+}
+
+void MainWindow::fail()
+{
+    m_stopWatch->stop();
+    setFailStyle(m_ctrlBtn);
 }
 

@@ -13,7 +13,8 @@ QLCDNumber *MineBoard::getLCD()
 MineBoard::setMineNumber(unsigned _num)
 {
     m_mineNumber = _num;
-    m_LCD->display(QString::number(m_mineNumber, 10).fill('0', 3));
+    m_LCD->display(QString::number(static_cast<int>(m_mineNumber), 10));
+    m_LCD->update();
 }
 
 void MineBoard::initLCD()
@@ -29,4 +30,5 @@ void MineBoard::initLCD()
     m_LCD->setPalette(palette);
     m_LCD->setStyleSheet("background-color: black");
     m_LCD->display("000");
+    m_LCD->update();
 }

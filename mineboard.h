@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QLCDNumber>
+#include <QDebug>
 
 class MineBoard : public QObject
 {

@@ -34,16 +34,15 @@ private:
     initConnect();
 
 private:
-    void setInit();
-    void setSuccess();
-    void setFailure();
-
     void setNormalStyle(QPushButton * _btn);
     void setSuccessStyle(QPushButton * _btn);
     void setFailStyle(QPushButton * _btn);
 
 private slots:
     void onBtnClickedHandle();
+    void startGame();
+    void succ();
+    void fail();
 
 private:
     QWidget * m_mainWidget;
@@ -52,15 +51,25 @@ private:
     QVBoxLayout * m_mainLayout;
     QHBoxLayout * m_topLayout;
 
-    QMenu * m_GameMenu;
-    QMenu * m_HelpMenu;
-
     MineBoard * m_mineBoard;
     QPushButton * m_ctrlBtn;
     StopWatch * m_stopWatch;
 
     bool m_isFirstTime;
     State m_btnStyle;
+
+    QMenu * m_gameMenu;
+    QMenu * m_helpMenu;
+    // Game
+    QAction* m_newGameAct;
+    QAction* m_optionsAct;
+    QAction* m_exitAct;
+    // Help
+    QAction* m_helpAct;
+    QAction* m_aboutAct;
+    QAction* m_moreGameAct;
+
+
 };
 
 #endif // MAINWINDOW_H
