@@ -25,10 +25,9 @@ void MineBoard::initLCD()
     m_LCD->setSegmentStyle(QLCDNumber::Flat);
 
     QPalette palette = m_LCD->palette();
-    palette.setColor(QPalette::Normal, QPalette::WindowText, Qt::red);
-    palette.setColor(QPalette::Normal, QPalette::Shadow, Qt::black);
+    palette.setColor(QPalette::Normal, QPalette::WindowText, QColor(250, 50, 50, 255));
     m_LCD->setPalette(palette);
-    m_LCD->setStyleSheet("background-color: black");
+    m_LCD->setStyleSheet("background-color: rgb(50, 50, 50);");
     m_LCD->display("000");
     m_LCD->update();
 }

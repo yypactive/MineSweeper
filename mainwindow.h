@@ -10,7 +10,10 @@
 #include <QPushButton>
 #include "stopwatch.h"
 #include "viewwidget.h"
+#include "optionswidget.h"
 #include <QMainWindow>
+#include <QMessageBox>
+#include <QSpacerItem>
 
 class MainWindow : public QMainWindow
 {
@@ -21,17 +24,22 @@ public:
         run,
         end
     };
+    static const qreal ms_spaceW;
+    static const qreal ms_spaceH;
 
 public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
 private:
-    initWindow();
-    initMenu();
-    initAction();
-    initStateBar();
-    initConnect();
+    void initWindow();
+    void initOptionsWidget();
+    void initMenu();
+    void initAction();
+    void initStateBar();
+    void initConnect();
+
+    void newGame();
 
 private:
     void setNormalStyle(QPushButton * _btn);
@@ -40,13 +48,19 @@ private:
 
 private slots:
     void onBtnClickedHandle();
-    void startGame();
+    void startStopWatch();
     void succ();
     void fail();
+    void showOptions();
+    void showHelp();
+    void showAbout();
+    void showMoreGame();
+    void onOptionsHandle(unsigned _row, unsigned _col, unsigned _mine);
 
 private:
     QWidget * m_mainWidget;
     ViewWidget * m_ViewWidget;
+    OptionsWidget * m_optionsWidget;
 
     QVBoxLayout * m_mainLayout;
     QHBoxLayout * m_topLayout;
@@ -68,6 +82,10 @@ private:
     QAction* m_helpAct;
     QAction* m_aboutAct;
     QAction* m_moreGameAct;
+    //option
+    unsigned m_row;
+    unsigned m_col;
+    unsigned m_amount;
 
 
 };

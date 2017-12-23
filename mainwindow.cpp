@@ -1,30 +1,37 @@
 #include "mainwindow.h"
 
+const qreal MainWindow::ms_spaceW = 15.;
+const qreal MainWindow::ms_spaceH = 15.;
+
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), m_isFirstTime(true), m_btnStyle(State::wait)
+    : QMainWindow(parent), m_isFirstTime(true), m_btnStyle(State::wait),
+      m_row(OptionsWidget::ms_easyRow), m_col(OptionsWidget::ms_easyCol), m_amount(OptionsWidget::ms_easyMine)
 {   
     initWindow();
     initMenu();
+    initOptionsWidget();
     initConnect();
+    newGame();
 }
 
 MainWindow::~MainWindow()
 {
 }
 
-MainWindow::initWindow()
+void MainWindow::initWindow()
 {
     m_mainWidget = new QWidget(this);
     setCentralWidget(m_mainWidget);
 
-    m_mainLayout = new QVBoxLayout(this);
+    m_mainLayout = new QVBoxLayout(m_mainWidget);
 
-    m_topLayout = new QHBoxLayout(this);
+    m_topLayout = new QHBoxLayout();
     // TODO: mineBoard
     m_mineBoard = new MineBoard();
     QLCDNumber * mlcd = m_mineBoard->getLCD();
     mlcd->setFixedSize(70, 50);
     m_topLayout->addWidget(mlcd);
+    m_topLayout->addItem(new QSpacerItem(100, 50));
     m_topLayout->addStretch();
 
     m_ctrlBtn = new QPushButton("^_^", this);
@@ -45,9 +52,17 @@ MainWindow::initWindow()
 
     m_mainWidget->setLayout(m_mainLayout);
 
+    setWindowTitle("MineSweeper yyp");
+
 }
 
-MainWindow::initMenu()
+void MainWindow::initOptionsWidget()
+{
+    m_optionsWidget = new OptionsWidget();
+    m_optionsWidget->hide();
+}
+
+void MainWindow::initMenu()
 {
 
     m_gameMenu = new QMenu(tr("Game"), this);
@@ -58,7 +73,7 @@ MainWindow::initMenu()
     menuBar()->addMenu(m_helpMenu);
 }
 
-MainWindow::initAction()
+void MainWindow::initAction()
 {
     // Game
     m_newGameAct = new QAction(QIcon(""), tr("New Game"), this);
@@ -83,44 +98,64 @@ MainWindow::initAction()
     m_helpMenu->addAction(m_moreGameAct);
 }
 
-MainWindow::initConnect()
+void MainWindow::initConnect()
 {
+    connect(m_newGameAct, SIGNAL(triggered()), this, SLOT(onBtnClickedHandle()));
+    connect(m_optionsAct, SIGNAL(triggered()), this, SLOT(showOptions()));
+    connect(m_exitAct, SIGNAL(triggered()), this, SLOT(close()));
+    connect(m_helpAct, SIGNAL(triggered()), this, SLOT(showHelp()));
+    connect(m_aboutAct, SIGNAL(triggered()), this, SLOT(showAbout()));
+    connect(m_moreGameAct, SIGNAL(triggered()), this, SLOT(showMoreGame()));
+
     connect(m_ctrlBtn, SIGNAL(clicked()), this, SLOT(onBtnClickedHandle()));
-    connect(m_ViewWidget, SIGNAL(startStopWatch()), this, SLOT(startGame()));
+    connect(m_ViewWidget, SIGNAL(startStopWatch()), this, SLOT(startStopWatch()));
     connect(m_ViewWidget, SIGNAL(sendSucc()), this, SLOT(succ()));
     connect(m_ViewWidget, SIGNAL(sendFail()), this, SLOT(fail()));
     connect(m_ViewWidget, SIGNAL(setFlagCount(unsigned)), m_mineBoard, SLOT(setMineNumber(unsigned)));
+    connect(m_optionsWidget, SIGNAL(sendOptions(unsigned, unsigned, unsigned)), this, SLOT(onOptionsHandle(unsigned, unsigned, unsigned)));
+}
+
+void MainWindow::newGame()
+{
+    m_ViewWidget->newGame(m_row, m_col, m_amount);
+    m_mineBoard->setMineNumber(m_amount);
+    update();
+    setFixedSize(m_ViewWidget->width() + 2 * ms_spaceW,
+                 m_ViewWidget->height() + m_mineBoard->getLCD()->height() + 5 * ms_spaceH);
 }
 
 void MainWindow::setNormalStyle(QPushButton *_btn)
 {
     _btn->setText("^_^");
-    m_ctrlBtn->setFont(QFont("msyh", 12, 10));
-    _btn->setStyleSheet("background-color: grey;");
+    m_ctrlBtn->setFont(QFont("Consolas", 14, 70));
+    _btn->setStyleSheet("background-color: rgb(150, 150, 150);");
 }
 
 void MainWindow::setSuccessStyle(QPushButton *_btn)
 {
     _btn->setText("^v^");
-    m_ctrlBtn->setFont(QFont("msyh", 12, 10));
-    _btn->setStyleSheet("background-color: rgb(170, 0, 255);");
+    m_ctrlBtn->setFont(QFont("Consolas", 14, 70));
+    _btn->setStyleSheet("background-color: rgb(170, 120, 50);");
 }
 
 void MainWindow::setFailStyle(QPushButton *_btn)
 {
-    _btn->setText("x_x");
-    m_ctrlBtn->setFont(QFont("msyh", 12, 10));
-    _btn->setStyleSheet("background-color: blue;");
+    _btn->setText("*_*");
+    m_ctrlBtn->setFont(QFont("Consolas", 14, 70));
+    _btn->setStyleSheet("background-color: rgb(50, 170, 170);");
 }
 
 void MainWindow::onBtnClickedHandle()
 {
+    m_stopWatch->stop();
     m_stopWatch->reset();
+    setNormalStyle(m_ctrlBtn);
+    newGame();
     // clean all
     // new Game
 }
 
-void MainWindow::startGame()
+void MainWindow::startStopWatch()
 {
     m_stopWatch->start();
 }
@@ -135,5 +170,44 @@ void MainWindow::fail()
 {
     m_stopWatch->stop();
     setFailStyle(m_ctrlBtn);
+}
+
+void MainWindow::showOptions()
+{
+    m_optionsWidget->show();
+}
+
+void MainWindow::showHelp()
+{
+    QMessageBox::about(this, tr("Help"),
+                       tr("<h3>User Manual</h3>"
+                          "<p>F2: newGame\n"
+                          "<p>F4: options\n"
+                          ));
+}
+
+void MainWindow::showAbout()
+{
+    QMessageBox::about(this, tr("About"),
+                       tr("<h3>MineSweeper</h3>"
+                          "<p>Copyright &copy; 2017 yyp\n"
+                          "<p>Version 0.3\n"
+                          ));
+}
+
+void MainWindow::showMoreGame()
+{
+    QMessageBox::about(this, tr("More Game"),
+        tr("<h3>For More Game</h3>"
+        "<a href = https://github.com/yypactive>https://github.com/yypactive<\a>"
+           ));
+}
+
+void MainWindow::onOptionsHandle(unsigned _row, unsigned _col, unsigned _mine)
+{
+    m_row = _row;
+    m_col = _col;
+    m_amount = _mine;
+    onBtnClickedHandle();
 }
 

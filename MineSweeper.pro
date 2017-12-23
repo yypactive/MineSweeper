@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     minetile.cpp \
     minedata.cpp \
     minetilematrix.cpp \
-    minedatamgr.cpp
+    minedatamgr.cpp \
+    optionswidget.cpp
 
 HEADERS  += mainwindow.h \
     viewwidget.h \
@@ -43,6 +44,7 @@ HEADERS  += mainwindow.h \
     minetile.h \
     minedata.h \
     minetilematrix.h \
-    minedatamgr.h
+    minedatamgr.h \
+    optionswidget.h
 
 FORMS +=

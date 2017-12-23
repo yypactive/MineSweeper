@@ -2,7 +2,7 @@
 
 const qreal MineTile::ms_width = 40.;
 const qreal MineTile::ms_height = 40.;
-const qreal MineTile::ms_fontSize = 12;
+const qreal MineTile::ms_fontSize = 13;
 const qreal MineTile::ms_shadowDepth = 3.;
 const unsigned MineTile::ms_hoverColor = 240;
 const unsigned MineTile::ms_backColor = 230;
@@ -114,7 +114,7 @@ void MineTile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
     }
 
     QFont font = painter->font();
-    font.setFamily("yahei");
+    font.setFamily("Consolas");
     font.setPointSizeF(ms_fontSize);
     font.setBold(true);
     painter->setFont(font);
@@ -122,7 +122,10 @@ void MineTile::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, 
 
     if (m_displayVal >= '1' && m_displayVal <= '9' && !getMine())
     {
-        painter->setPen(QPen(QColor(100, 100, 100, 255)));
+        qreal m_red = (m_displayVal - '1' + 1) % 3 ? 20. : 170.;
+        qreal m_green = (m_displayVal - '1' + 2) % 3 ? 20. : 170.;
+        qreal m_blue = (m_displayVal - '1') % 3 ? 20. : 170.;
+        painter->setPen(QPen(QColor(m_red, m_green, m_blue, 255)));
         int fw = fm.width(QChar(m_displayVal));
         int fh = fm.ascent() + fm.descent();
         QRectF rect(boundingRect().width() / 2. - fw / 2., boundingRect().height() / 2. - fh / 2., fw, fh);
@@ -342,6 +345,8 @@ void MineTile::onMousePressEventHandle(QMouseEvent *event)
     // qDebug() << "mouse press: " << getLogicPos();
     if (m_isChecked)
         return;
+    if (m_displayVal == '^')
+        return;
     if (event->button() == Qt::RightButton)
     {
         if (m_isPressed)
@@ -372,6 +377,8 @@ void MineTile::onMouseReleaseEventHandle(QMouseEvent *event)
 {
     // qDebug() << "mouse release: " << getLogicPos();
     if (m_isChecked)
+        return;
+    if (m_displayVal == '^')
         return;
     if (event->button() == Qt::RightButton)
     {

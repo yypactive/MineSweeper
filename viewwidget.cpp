@@ -1,34 +1,33 @@
 #include "viewwidget.h"
 
+const qreal ViewWidget::ms_frameW = 10;
+
 ViewWidget::ViewWidget(QWidget *parent) : QWidget(parent)
 {
     m_scene = new QGraphicsScene(this);
     m_view = new View(m_scene, this);
-    m_mineMatrix.reset(new MineTileMatrix(m_scene));
-    initMatrix();
-    m_scene->setBackgroundBrush(QBrush(QColor(230,230,230,255)));
-    m_scene->setSceneRect(0, 0, m_mineMatrix->getWidth(), m_mineMatrix->getHeight());
-    m_view->scale(.95, .95);
-    m_view->setFixedSize(m_mineMatrix->getWidth(), m_mineMatrix->getHeight());
-    setFixedSize(m_mineMatrix->getWidth(), m_mineMatrix->getHeight());
-    update();
+    m_scene->setBackgroundBrush(QBrush(QColor(220,220,220,255)));
     this->setWindowFlags(Qt::FramelessWindowHint);
     m_view->setWindowFlags(Qt::FramelessWindowHint);
 }
 
-void ViewWidget::newGame()
+void ViewWidget::newGame(unsigned _row, unsigned _col, unsigned _amount)
 {
     clearAll();
-    initMatrix();
+    initMatrix(_row, _col, _amount);
+    m_scene->setSceneRect(0, 0, m_mineMatrix->getWidth(), m_mineMatrix->getHeight());
+    // m_view->scale(.95, .95);
+    m_view->setFixedSize(m_mineMatrix->getWidth() + 2 * ms_frameW, m_mineMatrix->getHeight() + 2 * ms_frameW);
+    setFixedSize(m_mineMatrix->getWidth() + 2 * ms_frameW, m_mineMatrix->getHeight() + 2 * ms_frameW);
+    update();
 }
 
-void ViewWidget::initMatrix()
+void ViewWidget::initMatrix(unsigned _row, unsigned _col, unsigned _amount)
 {
-  m_mineMatrix->init(MineTileMatrix::ms_col,
-                     MineTileMatrix::ms_col,
-                     MineTileMatrix::ms_amount);
-  m_mineMatrix->addToScene();
-  initConnect();
+    m_mineMatrix.reset(new MineTileMatrix(m_scene));
+    m_mineMatrix->init(_row, _col, _amount);
+    m_mineMatrix->addToScene();
+    initConnect();
 }
 
 void ViewWidget::initConnect()

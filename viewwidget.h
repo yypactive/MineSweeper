@@ -15,11 +15,12 @@ class ViewWidget : public QWidget
     Q_OBJECT
 public:
     explicit ViewWidget(QWidget *parent = 0);
-    void newGame();
-    void initMatrix();
+    void newGame(unsigned _row, unsigned _col, unsigned _amount);
+    void initMatrix(unsigned _row, unsigned _col, unsigned _amount);
 
 public:
     using MineTileMatrixPtr = std::unique_ptr<MineTileMatrix>;
+    static const qreal ms_frameW;
 
 signals:
     void startStopWatch();

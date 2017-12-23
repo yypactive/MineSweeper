@@ -113,9 +113,9 @@ void MineTileMatrix::onTileClickedHandle(QPoint _cp, bool _isShift)
         // auto clicked error
         std::vector<QPoint> vec = std::move(getNeighborVec(_cp));
         unsigned flagCount = getNeighborFlag(_cp);
-        unsigned questCount = getNeighborQuest(_cp);
+        // unsigned questCount = getNeighborQuest(_cp);
         if (flagCount == (m_mineTileMatrix[_cp.y()][_cp.x()]->getDisplayVal() - '0')
-                && questCount == 0)
+                )// && questCount == 0)
         {
             std::for_each(vec.begin(), vec.end(),
                           [&](QPoint & p)
